@@ -1,3 +1,5 @@
+# Full stack for local use: PostgreSQL, the API on :5000 and the UI on :8080.
+#   docker compose up -d --build
 services:
   postgres:
     image: postgres:16-alpine
@@ -7,11 +9,11 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: stocksense
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -22,19 +24,32 @@ services:
       dockerfile: Dockerfile
     container_name: stocksense-backend
     ports:
-      - "5000:5000"
+      - '5000:5000'
     environment:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/stocksense
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
-      PORT: ${PORT:-5000}
+      PORT: 5000
       CLIENT_URL: ${CLIENT_URL:-http://localhost:5173}
       NODE_ENV: ${NODE_ENV:-development}
     depends_on:
       postgres:
         condition: service_healthy
     command: >
-      sh -c "npx prisma migrate deploy && node dist/server.js"
+      sh -c "npx prisma migrate deploy
+      && npm run prisma:seed
+      && exec node --enable-source-maps dist/src/server.js"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    container_name: stocksense-frontend
+    ports:
+      - '8080:80'
+    depends_on:
+      - backend
     restart: unless-stopped
 
 volumes:
