@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { ledgerService } from '../services/ledger.service';
-import { sendSuccess, sendPaginatedSuccess, sendError } from '../utils/response';
+import { sendSuccess, sendPaginatedSuccess } from '../utils/response';
 import { getPaginationParams } from '../utils/response';
 import { idParamSchema, ledgerQuerySchema, productIdParamSchema, locationIdParamSchema } from '../validators';
 

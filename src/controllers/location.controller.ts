@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { locationService } from '../services/location.service';
-import { sendSuccess, sendPaginatedSuccess, sendError } from '../utils/response';
+import { sendSuccess, sendPaginatedSuccess } from '../utils/response';
 import { getPaginationParams } from '../utils/response';
 import { createLocationSchema, updateLocationSchema, idParamSchema, warehouseIdParamSchema } from '../validators';
 

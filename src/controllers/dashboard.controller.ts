@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { dashboardService } from '../services/dashboard.service';
-import { sendSuccess, sendError } from '../utils/response';
+import { sendSuccess } from '../utils/response';
 import { dashboardQuerySchema } from '../validators';
 
 export class DashboardController {

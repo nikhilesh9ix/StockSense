@@ -1,6 +1,6 @@
 import { prisma } from '../config/prisma';
 import { AppError } from '../utils/errors';
-import { PaginatedResult } from '../types';
+import type { PaginatedResult } from '../types';
 
 export interface LocationCreateInput {
   warehouseId: string;

@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { warehouseService } from '../services/warehouse.service';
-import { sendSuccess, sendPaginatedSuccess, sendError } from '../utils/response';
+import { sendSuccess, sendPaginatedSuccess } from '../utils/response';
 import { getPaginationParams } from '../utils/response';
 import { createWarehouseSchema, updateWarehouseSchema, idParamSchema } from '../validators';
 

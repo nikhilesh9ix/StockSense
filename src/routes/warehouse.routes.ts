@@ -5,6 +5,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 import { requireInventoryManager, requireWarehouseStaff } from '../middleware/role.middleware';
 import { createWarehouseSchema, updateWarehouseSchema, idParamSchema, createLocationSchema, updateLocationSchema, warehouseIdParamSchema } from '../validators';
 import { validate } from '../middleware/validate.middleware';
+import { Request } from '../utils/custom-request';
 
 const router = Router();
 

@@ -4,6 +4,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 import { requireWarehouseStaff, requireInventoryManager } from '../middleware/role.middleware';
 import { createTransferSchema, updateTransferSchema, idParamSchema, transferQuerySchema } from '../validators';
 import { validate } from '../middleware/validate.middleware';
+import { Request } from '../utils/custom-request';
 
 const router = Router();
 

@@ -1,7 +1,6 @@
 import { prisma } from '../config/prisma';
 import { AppError } from '../utils/errors';
-import { PaginatedResult } from '../types';
-import { ledgerQuerySchema } from '../validators';
+import type { PaginatedResult } from '../types';
 
 export interface LedgerQuery {
   page: number;

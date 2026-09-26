@@ -1,7 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { productService } from '../services/product.service';
-import { sendSuccess, sendPaginatedSuccess, sendError } from '../utils/response';
-import { getPaginationParams } from '../utils/response';
+import { sendSuccess, sendPaginatedSuccess } from '../utils/response';
 import { createProductSchema, updateProductSchema, idParamSchema, productQuerySchema } from '../validators';
 
 export class ProductController {

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { authService } from '../services/auth.service';
 import { sendSuccess, sendError } from '../utils/response';
 import {
@@ -9,7 +9,7 @@ import {
   verifyOtpSchema,
   resetPasswordSchema,
 } from '../validators';
-import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import type { AuthenticatedRequest } from '../middleware/auth.middleware';
 
 export class AuthController {
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {

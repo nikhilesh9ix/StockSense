@@ -1,15 +1,16 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import type { Request as CustomRequest } from '../utils/custom-request';
+import type { UserRole } from '../constants';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
-import { AppError, isAppError } from '../utils/errors';
-import prisma from '../config/prisma';
+import { AppError } from '../utils/errors';
 
-export interface AuthenticatedRequest extends Request {
+export interface AuthenticatedRequest extends CustomRequest {
   user?: {
     id: string;
     email: string;
     name: string;
-    role: string;
+    role: UserRole;
   };
 }
 
@@ -27,7 +28,7 @@ export function authMiddleware(req: AuthenticatedRequest, res: Response, next: N
       id: string;
       email: string;
       name: string;
-      role: string;
+      role: UserRole;
     };
 
     req.user = decoded;
@@ -43,7 +44,7 @@ export function authMiddleware(req: AuthenticatedRequest, res: Response, next: N
   }
 }
 
-export async function optionalAuthMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+export function optionalAuthMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -57,7 +58,7 @@ export async function optionalAuthMiddleware(req: AuthenticatedRequest, res: Res
       id: string;
       email: string;
       name: string;
-      role: string;
+      role: UserRole;
     };
 
     req.user = decoded;

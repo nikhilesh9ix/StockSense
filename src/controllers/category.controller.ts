@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { categoryService } from '../services/category.service';
-import { sendSuccess, sendPaginatedSuccess, sendError } from '../utils/response';
+import { sendSuccess, sendPaginatedSuccess } from '../utils/response';
 import { getPaginationParams } from '../utils/response';
 import { createCategorySchema, updateCategorySchema, idParamSchema } from '../validators';
 

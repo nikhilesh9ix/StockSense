@@ -1,4 +1,4 @@
-import { UserRole, OperationStatus, StockLedgerType } from '../constants';
+import type { UserRole, StockLedgerType } from '../constants';
 
 export interface JWTPayload {
   id: string;

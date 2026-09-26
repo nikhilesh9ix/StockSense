@@ -1,9 +1,9 @@
 import { prisma } from '../config/prisma';
 import { AppError } from '../utils/errors';
-import { OperationStatus, StockLedgerType } from '../constants';
-import { PaginatedResult } from '../types';
+import { OperationStatus } from '../constants';
+import type { PaginatedResult } from '../types';
 import { inventoryService } from './inventory.service';
-import { TransferQuery } from '../validators';
+import type { TransferQuery } from '../validators';
 
 export interface TransferCreateInput {
   items: Array<{

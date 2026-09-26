@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { transferService } from '../services/transfer.service';
 import { sendSuccess, sendPaginatedSuccess, sendError } from '../utils/response';
 import { getPaginationParams } from '../utils/response';
 import { createTransferSchema, updateTransferSchema, idParamSchema, transferQuerySchema } from '../validators';
-import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import type { AuthenticatedRequest } from '../middleware/auth.middleware';
 
 export class TransferController {
   async create(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {

@@ -3,8 +3,8 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '../config/prisma';
 import { env } from '../config/env';
 import { AppError } from '../utils/errors';
-import { JWTPayload, TokenPair } from '../types';
-import { UserRole } from '../constants';
+import type { JWTPayload, TokenPair } from '../types';
+import type { UserRole } from '../constants';
 
 export class AuthService {
   private generateTokens(payload: JWTPayload): TokenPair {
@@ -130,7 +130,7 @@ export class AuthService {
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    // const _otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     // In a real app, store OTP in database or Redis
     // For now, we'll log it for development

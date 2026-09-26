@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Response, NextFunction } from 'express';
 import { UserRole } from '../constants';
 import { AppError } from '../utils/errors';
-import { AuthenticatedRequest } from './auth.middleware';
+import type { AuthenticatedRequest } from './auth.middleware';
 
 export function requireRole(...allowedRoles: UserRole[]) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {

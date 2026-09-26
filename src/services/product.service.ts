@@ -1,7 +1,7 @@
 import { prisma } from '../config/prisma';
 import { AppError } from '../utils/errors';
-import { PaginatedResult } from '../types';
-import { ProductQuery } from '../validators';
+import type { PaginatedResult } from '../types';
+import type { ProductQuery } from '../validators';
 
 export interface ProductCreateInput {
   name: string;
@@ -60,7 +60,7 @@ export class ProductService {
       where.categoryId = categoryId;
     }
 
-    const [data, total] = await Promise.all([
+    const [_data] = await Promise.all([
       prisma.product.findMany({
         where,
         skip,
@@ -77,11 +77,10 @@ export class ProductService {
           },
         },
       }),
-      prisma.product.count({ where }),
     ]);
 
     // Calculate stock status for each product
-    const productsWithStatus = data.map((product) => {
+    const productsWithStatus = _data.map((product) => {
       const totalQuantity = product.inventory.reduce((sum, inv) => sum + inv.quantity, 0);
       let status: 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK' = 'IN_STOCK';
       

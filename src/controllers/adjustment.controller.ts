@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { adjustmentService } from '../services/adjustment.service';
 import { sendSuccess, sendPaginatedSuccess, sendError } from '../utils/response';
 import { getPaginationParams } from '../utils/response';
 import { createAdjustmentSchema, updateAdjustmentSchema, idParamSchema, adjustmentQuerySchema } from '../validators';
-import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import type { AuthenticatedRequest } from '../middleware/auth.middleware';
 
 export class AdjustmentController {
   async create(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {

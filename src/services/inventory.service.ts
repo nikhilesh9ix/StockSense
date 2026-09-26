@@ -1,8 +1,7 @@
 import { prisma } from '../config/prisma';
 import { AppError } from '../utils/errors';
 import { StockLedgerType } from '../constants';
-import { InventorySummary, PaginatedResult } from '../types';
-import { inventoryQuerySchema } from '../validators';
+import type { InventorySummary, PaginatedResult } from '../types';
 
 export interface StockMutationInput {
   productId: string;

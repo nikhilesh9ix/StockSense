@@ -1,15 +1,22 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { AppError, isAppError } from '../utils/errors';
 import { sendError } from '../utils/response';
 import { HTTP_STATUS } from '../constants';
 import { ZodError } from 'zod';
 import { Prisma } from '@prisma/client';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _AppError = AppError;
+
+interface RequestWithId extends Request {
+  requestId?: string;
+}
+
 export function errorMiddleware(
   error: Error,
-  req: Request,
+  req: RequestWithId,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void {
   console.error(`[ERROR] ${req.method} ${req.path}`, {
     requestId: req.requestId,
@@ -74,6 +81,6 @@ export function errorMiddleware(
   );
 }
 
-export function notFoundMiddleware(req: Request, res: Response): void {
-  sendError(res, { code: 'NOT_FOUND', message: `Route ${req.method} ${req.path} not found` }, 404);
+export function notFoundMiddleware(_req: Request, res: Response): void {
+  sendError(res, { code: 'NOT_FOUND', message: `Route ${_req.method} ${_req.path} not found` }, 404);
 }

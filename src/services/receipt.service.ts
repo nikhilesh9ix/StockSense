@@ -1,9 +1,9 @@
 import { prisma } from '../config/prisma';
 import { AppError } from '../utils/errors';
 import { OperationStatus, StockLedgerType } from '../constants';
-import { PaginatedResult } from '../types';
+import type { PaginatedResult } from '../types';
 import { inventoryService } from './inventory.service';
-import { ReceiptQuery } from '../validators';
+import type { ReceiptQuery } from '../validators';
 
 export interface ReceiptCreateInput {
   supplierName: string;

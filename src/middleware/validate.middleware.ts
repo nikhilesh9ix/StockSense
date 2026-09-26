@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { AnyZodObject, ZodError } from 'zod';
+import type { Request, Response, NextFunction } from 'express';
+import type { AnyZodObject} from 'zod';
+import { ZodError } from 'zod';
 import { AppError } from '../utils/errors';
 
 export function validate(schema: AnyZodObject) {

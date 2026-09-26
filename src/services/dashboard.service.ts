@@ -1,7 +1,6 @@
 import { prisma } from '../config/prisma';
 import { OperationStatus } from '../constants';
-import { DashboardSummary } from '../types';
-import { dashboardQuerySchema } from '../validators';
+import type { DashboardSummary } from '../types';
 
 export interface DashboardQuery {
   documentType?: string;
@@ -80,7 +79,8 @@ export class DashboardService {
   }
 
   async getFilteredDocuments(query: DashboardQuery) {
-    const { documentType, status, warehouseId, locationId, categoryId } = query;
+    const { documentType, status } = query;
+    // const { documentType, status, _warehouseId, _locationId, _categoryId } = query;
 
     const results: any = {};
 

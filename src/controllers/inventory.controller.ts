@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { inventoryService } from '../services/inventory.service';
-import { sendSuccess, sendPaginatedSuccess, sendError } from '../utils/response';
+import { sendSuccess, sendPaginatedSuccess } from '../utils/response';
 import { getPaginationParams } from '../utils/response';
-import { idParamSchema, inventoryQuerySchema, productIdParamSchema, locationIdParamSchema } from '../validators';
+import { inventoryQuerySchema, productIdParamSchema, locationIdParamSchema } from '../validators';
 
 export class InventoryController {
   async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
