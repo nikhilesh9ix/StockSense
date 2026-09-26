@@ -1,0 +1,283 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  INVENTORY_MANAGER
+  WAREHOUSE_STAFF
+}
+
+enum OperationStatus {
+  DRAFT
+  WAITING
+  READY
+  DONE
+  CANCELED
+}
+
+enum StockLedgerType {
+  RECEIPT
+  DELIVERY
+  TRANSFER_IN
+  TRANSFER_OUT
+  ADJUSTMENT
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  passwordHash  String
+  role          UserRole  @default(WAREHOUSE_STAFF)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  createdReceipts     Receipt[]       @relation("ReceiptCreatedBy")
+  createdDeliveries   Delivery[]      @relation("DeliveryCreatedBy")
+  createdTransfers    Transfer[]      @relation("TransferCreatedBy")
+  createdAdjustments  Adjustment[]    @relation("AdjustmentCreatedBy")
+  ledgerEntries       StockLedger[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id              String    @id @default(cuid())
+  name            String
+  sku             String    @unique
+  categoryId      String
+  unitOfMeasure   String
+  reorderLevel    Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  category        Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  inventory       Inventory[]
+  receiptItems    ReceiptItem[]
+  deliveryItems   DeliveryItem[]
+  transferItems   TransferItem[]
+  adjustmentItems AdjustmentItem[]
+  ledgerEntries   StockLedger[]
+
+  @@index([sku])
+  @@index([name])
+  @@map("products")
+}
+
+model Warehouse {
+  id          String    @id @default(cuid())
+  name        String
+  address     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  locations   Location[]
+
+  @@map("warehouses")
+}
+
+model Location {
+  id          String    @id @default(cuid())
+  warehouseId String
+  name        String
+  code        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  inventory   Inventory[]
+  receiptItems     ReceiptItem[]     @relation("ReceiptLocation")
+  deliveryItems    DeliveryItem[]    @relation("DeliveryLocation")
+  transferSourceItems TransferItem[] @relation("TransferSourceLocation")
+  transferDestItems   TransferItem[] @relation("TransferDestLocation")
+  adjustmentItems  AdjustmentItem[]
+  ledgerEntries    StockLedger[]
+
+  @@unique([warehouseId, code])
+  @@map("locations")
+}
+
+model Inventory {
+  id          String   @id @default(cuid())
+  productId   String
+  locationId  String
+  quantity    Int      @default(0)
+  updatedAt   DateTime @updatedAt
+
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  location    Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, locationId])
+  @@index([productId])
+  @@index([locationId])
+  @@map("inventories")
+}
+
+model Receipt {
+  id            String           @id @default(cuid())
+  receiptNumber String           @unique
+  supplierName  String
+  status        OperationStatus  @default(DRAFT)
+  createdById   String
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  validatedAt   DateTime?
+
+  createdBy     User             @relation("ReceiptCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  items         ReceiptItem[]
+
+  @@index([status])
+  @@map("receipts")
+}
+
+model ReceiptItem {
+  id          String   @id @default(cuid())
+  receiptId   String
+  productId   String
+  locationId  String
+  quantity    Int
+
+  receipt     Receipt  @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  location    Location @relation("ReceiptLocation", fields: [locationId], references: [id], onDelete: Restrict)
+
+  @@map("receipt_items")
+}
+
+model Delivery {
+  id             String           @id @default(cuid())
+  deliveryNumber String           @unique
+  customerName   String
+  status         OperationStatus  @default(DRAFT)
+  createdById    String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  pickedAt       DateTime?
+  packedAt       DateTime?
+  validatedAt    DateTime?
+
+  createdBy      User             @relation("DeliveryCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  items          DeliveryItem[]
+
+  @@index([status])
+  @@map("deliveries")
+}
+
+model DeliveryItem {
+  id          String    @id @default(cuid())
+  deliveryId  String
+  productId   String
+  locationId  String
+  quantity    Int
+
+  delivery    Delivery  @relation(fields: [deliveryId], references: [id], onDelete: Cascade)
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  location    Location  @relation("DeliveryLocation", fields: [locationId], references: [id], onDelete: Restrict)
+
+  @@map("delivery_items")
+}
+
+model Transfer {
+  id              String           @id @default(cuid())
+  transferNumber  String           @unique
+  status          OperationStatus  @default(DRAFT)
+  createdById     String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  validatedAt     DateTime?
+
+  createdBy       User             @relation("TransferCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  items           TransferItem[]
+
+  @@index([status])
+  @@map("transfers")
+}
+
+model TransferItem {
+  id                 String    @id @default(cuid())
+  transferId         String
+  productId          String
+  sourceLocationId   String
+  destinationLocationId String
+  quantity           Int
+
+  transfer           Transfer  @relation(fields: [transferId], references: [id], onDelete: Cascade)
+  product            Product   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  sourceLocation     Location  @relation("TransferSourceLocation", fields: [sourceLocationId], references: [id], onDelete: Restrict)
+  destinationLocation Location @relation("TransferDestLocation", fields: [destinationLocationId], references: [id], onDelete: Restrict)
+
+  @@map("transfer_items")
+}
+
+model Adjustment {
+  id              String           @id @default(cuid())
+  adjustmentNumber String          @unique
+  status          OperationStatus  @default(DRAFT)
+  createdById     String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  validatedAt     DateTime?
+  reason          String
+
+  createdBy       User             @relation("AdjustmentCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+  items           AdjustmentItem[]
+
+  @@index([status])
+  @@map("adjustments")
+}
+
+model AdjustmentItem {
+  id              String     @id @default(cuid())
+  adjustmentId    String
+  productId       String
+  locationId      String
+  systemQuantity  Int
+  countedQuantity Int
+  difference      Int
+
+  adjustment      Adjustment @relation(fields: [adjustmentId], references: [id], onDelete: Cascade)
+  product         Product    @relation(fields: [productId], references: [id], onDelete: Restrict)
+  location        Location   @relation(fields: [locationId], references: [id], onDelete: Restrict)
+
+  @@map("adjustment_items")
+}
+
+model StockLedger {
+  id              String            @id @default(cuid())
+  productId       String
+  locationId      String
+  type            StockLedgerType
+  quantity        Int
+  balanceAfter    Int
+  referenceId     String
+  referenceType   String
+  createdById     String
+  createdAt       DateTime          @default(now())
+
+  product         Product           @relation(fields: [productId], references: [id], onDelete: Restrict)
+  location        Location          @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  createdBy       User              @relation(fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([productId])
+  @@index([locationId])
+  @@index([createdAt])
+  @@index([referenceId, referenceType])
+  @@map("stock_ledger")
+}
